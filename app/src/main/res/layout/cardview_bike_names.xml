@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/padding_small_2dp"
+    android:paddingRight="@dimen/padding_small_2dp"
+    >
+
+    <android.support.v7.widget.CardView
+        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/bikenames_cardview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        card_view:cardCornerRadius="@dimen/cardview_cornerradius"
+        card_view:cardUseCompatPadding="true"
+        card_view:cardElevation="@dimen/cardview_elevation" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical" >
+
+            <ImageView
+                android:id="@+id/bikenames_imageview"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:contentDescription="@string/bike_name"/>
+
+            <TextView
+                android:id="@+id/bikenames_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingLeft="@dimen/cardview_textpadding"
+                android:paddingRight="@dimen/cardview_textpadding"
+                android:textSize="@dimen/text_large"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light" />
+
+            <TextView
+                android:id="@+id/bikenames_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="@dimen/cardview_textpadding"
+                android:textSize="@dimen/text_small"
+                android:textStyle="bold"
+                android:fontFamily="sans-serif-light" />
+
+        </LinearLayout>
+    </android.support.v7.widget.CardView>
+
+</LinearLayout>
