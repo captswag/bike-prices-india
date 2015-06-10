@@ -2,13 +2,17 @@ package anjithsasindran.bikepricesindia;
 
 import android.content.res.Configuration;
 import android.os.Bundle;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -49,10 +53,12 @@ public class HomeActivity extends AppCompatActivity {
             public void onDataChange(DataSnapshot dataSnapshot) {
 
                 bikeDetails = new BikeDetails();
+                int positionOfIndex = 0;
                 for (DataSnapshot child : dataSnapshot.getChildren()) {
 
                     Map<?, ?> bikeKeyValue = (Map<?, ?>) child.getValue();
-                    bikeDetails.setBikeValues(bikeKeyValue);
+                    bikeDetails.setBikeValues(bikeKeyValue, positionOfIndex);
+                    positionOfIndex++;
                 }
                 adapter = new HomeActivityAdapter(bikeDetails);
 
@@ -72,21 +78,29 @@ public class HomeActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_bike_companies, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.action_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint(getResources().getString(R.string.search_companies));
+        searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                try {
+                    ((HomeActivityAdapter) recyclerView.getAdapter()).setFilter(query);
+                } catch (NullPointerException e) {
+                    Toast.makeText(getBaseContext(), "Wait for content to load", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+        });
+
         return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
-        int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
-        }
-
-        return super.onOptionsItemSelected(item);
     }
 }

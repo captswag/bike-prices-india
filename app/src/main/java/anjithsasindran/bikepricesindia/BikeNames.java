@@ -29,6 +29,12 @@ public class BikeNames {
         bikeNames.add(bike_name);
     }
 
+    public void setBikeValues(String imageUrl, String bikeName, String bikePrice) {
+        bikeImageUrl.add(imageUrl);
+        bikePrices.add(bikePrice);
+        bikeNames.add(bikeName);
+    }
+
     public String getBikeNameByIndex(int position) {
         return bikeNames.get(position);
     }

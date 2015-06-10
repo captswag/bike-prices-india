@@ -1,13 +1,16 @@
 package anjithsasindran.bikepricesindia;
 
-import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v4.app.NavUtils;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.text.InputType;
+import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.firebase.client.DataSnapshot;
 import com.firebase.client.Firebase;
@@ -36,22 +39,13 @@ public class BikeNamesActivity extends AppCompatActivity {
         assert getSupportActionBar() != null;
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
-
-        final int height = ((getWindowManager().getDefaultDisplay().getWidth() -
-                (Math.round(getResources().getDisplayMetrics().density) * 2 * 2)) * 3)/4;
-
         bike_names += getIntent().getStringExtra("position")+"/"
                 +getIntent().getStringExtra("bike_name");
         Firebase reference = new Firebase(bike_names);
 
+        layoutManager = new LinearLayoutManager(this);
         recyclerView = (RecyclerView) findViewById(R.id.bikename_recycler);
         recyclerView.setHasFixedSize(true);
-
-        if (getResources().getConfiguration().orientation == Configuration.ORIENTATION_PORTRAIT) {
-            layoutManager = new LinearLayoutManager(this);
-        } else {
-            layoutManager = new GridLayoutManager(this, 2);
-        }
         recyclerView.setLayoutManager(layoutManager);
 
         reference.addListenerForSingleValueEvent(new ValueEventListener() {
@@ -65,7 +59,7 @@ public class BikeNamesActivity extends AppCompatActivity {
                     bikeNames.setBikeValues(bikeKeyPair, child.getKey());
                 }
 
-                BikeNamesAdapter adapter = new BikeNamesAdapter(bikeNames, height);
+                BikeNamesAdapter adapter = new BikeNamesAdapter(bikeNames);
                 recyclerView.setAdapter(adapter);
             }
 
@@ -74,6 +68,34 @@ public class BikeNamesActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_bike_names, menu);
+
+        MenuItem searchItem = menu.findItem(R.id.bike_search);
+        SearchView searchView = (SearchView) MenuItemCompat.getActionView(searchItem);
+        searchView.setQueryHint(getResources().getString(R.string.search_bikes));
+        searchView.setInputType(InputType.TYPE_TEXT_FLAG_CAP_WORDS);
+        searchView.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String query) {
+
+                try {
+                    ((BikeNamesAdapter)recyclerView.getAdapter()).setFilter(query);
+                } catch(NullPointerException e) {
+                    Toast.makeText(getBaseContext(), "Wait for content to load", Toast.LENGTH_SHORT).show();
+                }
+                return true;
+            }
+        });
+        return true;
     }
 
     @Override

@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.squareup.picasso.Picasso;
 
@@ -15,17 +16,17 @@ import com.squareup.picasso.Picasso;
 public class BikeNamesAdapter extends RecyclerView.Adapter<BikeNamesViewHolder> {
 
     BikeNames bikeNames;
+    BikeNames afterQueryBikeNames;
     Context context;
-    int height;
 
-    public BikeNamesAdapter(BikeNames bikeNames, int height) {
+    public BikeNamesAdapter(BikeNames bikeNames) {
         this.bikeNames = bikeNames;
-        this.height = height;
+        this.afterQueryBikeNames = bikeNames;
     }
 
     @Override
     public int getItemCount() {
-        return bikeNames.getLength();
+        return afterQueryBikeNames.getLength();
     }
 
     @Override
@@ -36,21 +37,43 @@ public class BikeNamesAdapter extends RecyclerView.Adapter<BikeNamesViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(BikeNamesViewHolder holder, int position) {
+    public void onBindViewHolder(final BikeNamesViewHolder holder, int position) {
 
-        holder.textViewBikeName.setText(bikeNames.getBikeNameByIndex(position));
-        holder.textViewBikePrice.setText(bikeNames.getBikePricesByIndex(position));
+        holder.textViewBikeName.setText(afterQueryBikeNames.getBikeNameByIndex(position));
+        holder.textViewBikePrice.setText(
+                context.getResources().getString(R.string.Rs)+" "+
+                        afterQueryBikeNames.getBikePricesByIndex(position));
 
-        holder.imageView.requestLayout();
-        holder.imageView.getLayoutParams().height = height;
+        ViewTreeObserver widthListener = holder.imageView.getViewTreeObserver();
+        widthListener.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                holder.imageView.getViewTreeObserver().removeOnPreDrawListener(this);
 
-        Picasso.with(context).load(bikeNames.getBikeUrlByIndex(position))
+                holder.imageView.requestLayout();
+                holder.imageView.getLayoutParams().height = (holder.imageView.getMeasuredWidth() * 3) / 4;
+                return true;
+            }
+        });
+
+        Picasso.with(context).load(afterQueryBikeNames.getBikeUrlByIndex(position))
                 .into(holder.imageView);
     }
 
     @Override
     public void onAttachedToRecyclerView(RecyclerView recyclerView) {
         super.onAttachedToRecyclerView(recyclerView);
+    }
+
+    public void setFilter(String query) {
+        afterQueryBikeNames = new BikeNames();
+        query = query.toLowerCase();
+        for (int i = 0 ; i < bikeNames.getLength() ; i++) {
+            if (bikeNames.getBikeNameByIndex(i).toLowerCase().contains(query)) {
+                afterQueryBikeNames.setBikeValues(bikeNames.getBikeUrlByIndex(i),
+                        bikeNames.getBikeNameByIndex(i), bikeNames.getBikePricesByIndex(i));
+            }
+        }
+        notifyDataSetChanged();
     }
 
 

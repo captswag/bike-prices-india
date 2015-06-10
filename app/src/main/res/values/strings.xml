@@ -3,6 +3,9 @@
     <string name="app_name_without_country">Bike Prices</string>
 
     <string name="action_settings">Settings</string>
+    <string name="search_companies">Search companies</string>
+    <string name="search_bikes">Search bikes</string>
 
+    <string name="Rs">\u20B9</string>
     <string name="bike_name">Bike Name</string>
 </resources>

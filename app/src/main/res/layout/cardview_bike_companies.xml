@@ -29,7 +29,6 @@
                 android:layout_width="match_parent"
                 android:layout_below="@id/bike_companies_image"
                 android:padding="@dimen/cardview_textpadding"
-                android:textStyle="bold"
                 android:textSize="@dimen/text_medium"
                 android:fontFamily="sans-serif-light" />
 

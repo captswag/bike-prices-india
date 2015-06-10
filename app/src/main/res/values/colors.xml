@@ -3,5 +3,6 @@
 
     <color name="primaryColor">#3F51B5</color>
     <color name="primaryColorDark">#283593</color>
-
+    <color name="green">#4CAF50</color>
+    <color name="white">#FFFFFF</color>
 </resources>

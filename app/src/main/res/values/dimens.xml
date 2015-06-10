@@ -4,6 +4,8 @@
     <dimen name="activity_vertical_margin">16dp</dimen>
 
     <dimen name="cardview_elevation">4dp</dimen>
+    <dimen name="cardview_custom_3dp">3dp</dimen>
+    <dimen name="cardview_elevation_smaller">2dp</dimen>
     <dimen name="cardview_textpadding">8dp</dimen>
     <dimen name="cardview_cornerradius">2dp</dimen>
 
@@ -12,4 +14,9 @@
     <dimen name="text_medium">18sp</dimen>
 
     <dimen name="padding_small_2dp">2dp</dimen>
+    <dimen name="padding_medium_4dp">4dp</dimen>
+    <dimen name="padding_large_6dp">6dp</dimen>
+    <dimen name="padding_10dp">10dp</dimen>
+    <dimen name="padding_12dp">12dp</dimen>
+    <dimen name="padding_16dp">16dp</dimen>
 </resources>

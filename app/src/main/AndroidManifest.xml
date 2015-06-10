@@ -20,6 +20,7 @@
         </activity>
 
         <activity android:name=".BikeNamesActivity"
+            android:screenOrientation="portrait"
             android:parentActivityName=".HomeActivity" >
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

@@ -6,6 +6,7 @@ import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewTreeObserver;
 
 import com.squareup.picasso.Picasso;
 
@@ -16,15 +17,17 @@ import com.squareup.picasso.Picasso;
 public class HomeActivityAdapter extends RecyclerView.Adapter<HomeViewHolder> {
 
     BikeDetails bikeDetails;
+    BikeDetails afterQueryBikeDetails;
     public Context context;
 
     public HomeActivityAdapter(BikeDetails bikeDetails) {
         this.bikeDetails = bikeDetails;
+        this.afterQueryBikeDetails = bikeDetails;
     }
 
     @Override
     public int getItemCount() {
-        return bikeDetails.getLength();
+        return afterQueryBikeDetails.getLength();
     }
 
     @Override
@@ -35,17 +38,30 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeViewHolder> {
     }
 
     @Override
-    public void onBindViewHolder(HomeViewHolder holder, final int position) {
-        holder.textView.setText(bikeDetails.getBikeCompanyByIndex(position));
-        Picasso.with(context).load(bikeDetails.getBikeUrlByIndex(position))
+    public void onBindViewHolder(final HomeViewHolder holder, final int position) {
+        holder.textView.setText(afterQueryBikeDetails.getBikeCompanyByIndex(position));
+
+        ViewTreeObserver widthListener = holder.imageView.getViewTreeObserver();
+        widthListener.addOnPreDrawListener(new ViewTreeObserver.OnPreDrawListener() {
+            public boolean onPreDraw() {
+                holder.imageView.getViewTreeObserver().removeOnPreDrawListener(this);
+
+                holder.imageView.requestLayout();
+                holder.imageView.getLayoutParams().height = holder.imageView.getMeasuredWidth();
+                return true;
+            }
+        });
+
+        Picasso.with(context).load(afterQueryBikeDetails.getBikeUrlByIndex(position))
                 .into(holder.imageView);
+
 
         holder.cardView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Intent bikeNames = new Intent(context, BikeNamesActivity.class);
-                bikeNames.putExtra("bike_name", bikeDetails.getBikeCompanyByIndex(position));
-                bikeNames.putExtra("position", position+1+"");
+                bikeNames.putExtra("bike_name", afterQueryBikeDetails.getBikeCompanyByIndex(position));
+                bikeNames.putExtra("position", bikeDetails.getPosition(afterQueryBikeDetails.getBikeCompanyByIndex(position))+"");
                 context.startActivity(bikeNames);
             }
         });
@@ -54,5 +70,18 @@ public class HomeActivityAdapter extends RecyclerView.Adapter<HomeViewHolder> {
     @Override
     public void onViewAttachedToWindow(HomeViewHolder holder) {
         super.onViewAttachedToWindow(holder);
+    }
+
+    public void setFilter(String query) {
+        afterQueryBikeDetails = new BikeDetails();
+        query = query.toLowerCase();
+        for (int i = 0 ; i < bikeDetails.getLength() ; i++ ) {
+            if (bikeDetails.getBikeCompanyByIndex(i).toLowerCase().contains(query)) {
+                afterQueryBikeDetails.setBikeValues(
+                        bikeDetails.getBikeCompanyByIndex(i), bikeDetails.getBikeUrlByIndex(i)
+                );
+            }
+        }
+        notifyDataSetChanged();
     }
 }
